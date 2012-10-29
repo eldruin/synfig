@@ -143,8 +143,9 @@ Translate::accelerated_render(Context context,Surface *surface,int quality, cons
 	RendDesc desc(renddesc);
 
 	desc.clear_flags();
-	desc.set_tl(desc.get_tl()-origin);
-	desc.set_br(desc.get_br()-origin);
+	Matrix m;
+	m.set_translate(origin);
+	desc.get_transformation_chain().push(m);
 
 	// Render the scene
 	if(!context.accelerated_render(surface,quality,desc,cb))
