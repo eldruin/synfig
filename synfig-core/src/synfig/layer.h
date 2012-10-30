@@ -76,8 +76,8 @@
 		return new class();																\
 	}
 
-//! Imports a parameter 'x' and perform an action based usually based on
-//! some condition 'y'
+//! Imports a parameter 'x' and perform an action 'y' usually based on
+//! some condition after setting the parameter
 #define IMPORT_PLUS(x,y)																\
 	if (param==#x && value.same_type_as(x))												\
 	{																					\
@@ -89,12 +89,31 @@
 		return true;																	\
 	}
 
+//! Imports a parameter 'x' if it has the same type than 'y' and performs an action 'c'
+//! before setting the parameter
+#define IMPORT_PLUS_EXEC_BEFORE_SET_2PARAM(x,y,c)										\
+	if (param==#x && value.same_type_as(y))												\
+	{																					\
+		value.put(&x);																	\
+		{																				\
+			c;																			\
+		}																				\
+		set_param_static(#x,value.get_static());										\
+		return true;																	\
+	}
+
+//! Imports a parameter 'x' if it is of the same type as the parameter and performs
+//! an action 'c' before setting the parameter
+#define IMPORT_PLUS_EXEC_BEFORE_SET(x,c)												\
+		IMPORT_PLUS_EXEC_BEFORE_SET_2PARAM(x,x,c)
+
+
 //! Imports a parameter 'y' if it has the same type than 'x'
 #define IMPORT_AS(x,y)																	\
 	if (param==y && value.same_type_as(x))												\
 	{																					\
 		value.put(&x);																	\
-		set_param_static(y,value.get_static());										\
+		set_param_static(y,value.get_static());											\
 		return true;																	\
 	}
 
