@@ -172,6 +172,7 @@ Rotate::accelerated_render(Context context,Surface *surface,int quality, const R
 {
 	if(amount.dist(Angle::deg(0))==Angle::deg(0))
 		return context.accelerated_render(surface,quality,renddesc,cb);
+#if 0
 	if(amount.dist(Angle::deg(180))==Angle::deg(0))
 	{
 		RendDesc desc(renddesc);
@@ -182,6 +183,18 @@ Rotate::accelerated_render(Context context,Surface *surface,int quality, const R
 		tmp=renddesc.get_br()-origin;
 		desc.set_br(Point(-tmp[0],-tmp[1])+origin);
 		return context.accelerated_render(surface,quality,desc,cb);
+	}
+	else
+	{
+#endif
+		RendDesc desc(renddesc);
+		desc.clear_flags();
+
+		Matrix m;
+		m.set_rotate(amount);
+		desc.get_transformation_chain().push(m);
+		return context.accelerated_render(surface,quality,desc,cb);
+#if 0
 	}
 
 	SuperCallback stageone(cb,0,9000,10000);
@@ -332,7 +345,7 @@ Rotate::accelerated_render(Context context,Surface *surface,int quality, const R
 	}
 
 	if(cb && !cb->amount_complete(10000,10000)) return false;
-
+#endif
 	return true;
 }
 
