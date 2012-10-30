@@ -2717,6 +2717,8 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 
 		} catch(...) { synfig::error("Layer_Shape::render_shape()1: Caught an exception after %d loops, rethrowing...", tmp); throw; }
 
+		// Apply all the transformations to the points
+
 		//transfer all the data - RLE optimized
 		for(curnum=0; curnum < number;)
 		{
@@ -2728,6 +2730,10 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					x = (x - tl[0] + origin[0])*pw;
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
+
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
 
 					if(curnum == 0)
 					{
@@ -2756,6 +2762,10 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					tangent[0] = x - span.cur_x;
 					tangent[1] = y - span.cur_y;
 
@@ -2771,10 +2781,18 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					y = data[curnum+1][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x1 = data[curnum][0];
 					x1 = (x1 - tl[0] + origin[0])*pw;
 					y1 = data[curnum][1];
 					y1 = (y1 - tl[1] + origin[1])*ph;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x1);
 					tangent[1] = 2*(y - y1);
@@ -2791,8 +2809,16 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x1 = span.cur_x + tangent[0]/2;
 					y1 = span.cur_y + tangent[1]/2;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x1);
 					tangent[1] = 2*(y - y1);
@@ -2810,15 +2836,27 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					y = data[curnum+2][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x2 = data[curnum+1][0];
 					x2 = (x2 - tl[0] + origin[0])*pw;
 					y2 = data[curnum+1][1];
 					y2 = (y2 - tl[1] + origin[1])*ph;
 
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x2,y2));
+					x2 = point[0];
+					y2 = point[1];
+
 					x1 = data[curnum][0];
 					x1 = (x1 - tl[0] + origin[0])*pw;
 					y1 = data[curnum][1];
 					y1 = (y1 - tl[1] + origin[1])*ph;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x2);
 					tangent[1] = 2*(y - y2);
@@ -2836,13 +2874,25 @@ Layer_Shape::render_shape(Surface *surface,bool useblend,int /*quality*/,
 					y = data[curnum+1][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x2 = data[curnum][0];
 					x2 = (x2 - tl[0] + origin[0])*pw;
 					y2 = data[curnum][1];
 					y2 = (y2 - tl[1] + origin[1])*ph;
 
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x2,y2));
+					x2 = point[0];
+					y2 = point[1];
+
 					x1 = span.cur_x + tangent[0]/3.0;
 					y1 = span.cur_y + tangent[1]/3.0;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x2);
 					tangent[1] = 2*(y - y2);
@@ -2958,6 +3008,10 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					if(curnum == 0)
 					{
 						span.move_to(x,y);
@@ -2985,6 +3039,10 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					tangent[0] = x - span.cur_x;
 					tangent[1] = y - span.cur_y;
 
@@ -3000,10 +3058,18 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum+1][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x1 = data[curnum][0];
 					x1 = (x1 - tl[0] + origin[0])*pw;
 					y1 = data[curnum][1];
 					y1 = (y1 - tl[1] + origin[1])*ph;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x1);
 					tangent[1] = 2*(y - y1);
@@ -3020,8 +3086,16 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x1 = span.cur_x + tangent[0]/2;
 					y1 = span.cur_y + tangent[1]/2;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x1);
 					tangent[1] = 2*(y - y1);
@@ -3039,15 +3113,27 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum+2][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x2 = data[curnum+1][0];
 					x2 = (x2 - tl[0] + origin[0])*pw;
 					y2 = data[curnum+1][1];
 					y2 = (y2 - tl[1] + origin[1])*ph;
 
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x2,y2));
+					x2 = point[0];
+					y2 = point[1];
+
 					x1 = data[curnum][0];
 					x1 = (x1 - tl[0] + origin[0])*pw;
 					y1 = data[curnum][1];
 					y1 = (y1 - tl[1] + origin[1])*ph;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x2);
 					tangent[1] = 2*(y - y2);
@@ -3065,13 +3151,25 @@ Layer_Shape::render_shape(etl::surface<float> *surface,int /*quality*/,
 					y = data[curnum+1][1];
 					y = (y - tl[1] + origin[1])*ph;
 
+					Point point(renddesc.get_transformation_chain().get_transformed(Vector(x,y)));
+					x = point[0];
+					y = point[1];
+
 					x2 = data[curnum][0];
 					x2 = (x2 - tl[0] + origin[0])*pw;
 					y2 = data[curnum][1];
 					y2 = (y2 - tl[1] + origin[1])*ph;
 
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x2,y2));
+					x2 = point[0];
+					y2 = point[1];
+
 					x1 = span.cur_x + tangent[0]/3.0;
 					y1 = span.cur_y + tangent[1]/3.0;
+
+					point = renddesc.get_transformation_chain().get_transformed(Vector(x1,y1));
+					x1 = point[0];
+					y1 = point[1];
 
 					tangent[0] = 2*(x - x2);
 					tangent[1] = 2*(y - y2);
