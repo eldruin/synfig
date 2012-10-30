@@ -78,13 +78,11 @@ inline int floor_to_int(const double x) { return static_cast<int>(floor(x)); }
 /* === E N T R Y P O I N T ================================================= */
 
 Rectangle::Rectangle():
-	Layer_Composite(1.0,Color::BLEND_COMPOSITE),
-	color(Color::black()),
 	point1(0,0),
 	point2(1,1),
-	expand(0),
-	invert(false)
+	expand(0)
 {
+	sync();
 	Layer::Vocab voc(get_param_vocab());
 	Layer::fill_static(voc);
 }
@@ -92,41 +90,38 @@ Rectangle::Rectangle():
 bool
 Rectangle::set_param(const String & param, const ValueBase &value)
 {
-	IMPORT_PLUS(color, { if (color.get_a() == 0) { if (converted_blend_) {
-					set_blend_method(Color::BLEND_ALPHA_OVER);
-					color.set_a(1); } else transparent_color_ = true; } });
-	IMPORT(point1);
-	IMPORT(point2);
-	IMPORT(expand);
-	IMPORT(invert);
+	IMPORT_PLUS_EXEC_BEFORE_SET(point1, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(point2, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(expand, sync());
 
-	return Layer_Composite::set_param(param,value);
+	if(param=="vector_list")
+			return false;
+
+	sync();
+
+	return Layer_Polygon::set_param(param,value);
 }
 
 ValueBase
 Rectangle::get_param(const String &param)const
 {
-	EXPORT(color);
 	EXPORT(point1);
 	EXPORT(point2);
 	EXPORT(expand);
-	EXPORT(invert);
 
 	EXPORT_NAME();
 	EXPORT_VERSION();
 
-	return Layer_Composite::get_param(param);
+	if(param=="vector_list")
+			return ValueBase();
+
+	return Layer_Polygon::get_param(param);
 }
 
 Layer::Vocab
 Rectangle::get_param_vocab()const
 {
 	Layer::Vocab ret(Layer_Composite::get_param_vocab());
-
-	ret.push_back(ParamDesc("color")
-		.set_local_name(_("Color"))
-		.set_description(_("Fill color of the layer"))
-	);
 
 	ret.push_back(ParamDesc("point1")
 		.set_local_name(_("Point 1"))
@@ -144,12 +139,9 @@ Rectangle::get_param_vocab()const
 		.set_local_name(_("Expand amount"))
 	);
 
-	ret.push_back(ParamDesc("invert")
-		.set_local_name(_("Invert the rectangle"))
-	);
-
 	return ret;
 }
+#if 0
 
 synfig::Layer::Handle
 Rectangle::hit_check(synfig::Context context, const synfig::Point &pos)const
@@ -196,6 +188,7 @@ Rectangle::is_solid_color()const
 		 get_amount() == 1.0f &&
 		 color.get_a() == 1.0f);
 }
+
 
 Color
 Rectangle::get_color(Context context, const Point &pos)const
@@ -303,6 +296,52 @@ Rectangle::get_color(Context context, const Point &pos)const
 		return Color::blend(color,context.get_color(pos),get_amount(),get_blend_method());
 	}
 }
+#endif
+
+void
+Rectangle::sync()
+{
+	if(point1[0] > point2[0])
+		swap(point1[0], point2[0]);
+
+	if(point1[1] > point2[1])
+		swap(point1[1], point2[1]);
+
+	if(point1[0] > point2[0])
+	{
+		point1[0] += expand;
+		point2[0] -= expand;
+	}
+	else
+	{
+		point1[0] -= expand;
+		point2[0] += expand;
+	}
+
+	if(point1[1] > point2[1])
+	{
+		point1[1] += expand;
+		point2[1] -= expand;
+	}
+	else
+	{
+		point1[1] -= expand;
+		point2[1] += expand;
+	}
+
+	std::vector<Point> vector_list;
+	Point p1, p2, p3, p4;
+	p1 = point1; // top left corner
+	p2 = Point(point1[0], point2[1]); // bottom left corner
+	p3 = point2; // bottom right corner
+	p4 = Point(point2[0], point1[1]); // top right corner
+	vector_list.push_back(p1);
+	vector_list.push_back(p2);
+	vector_list.push_back(p3);
+	vector_list.push_back(p4);
+	clear();
+	add_polygon(vector_list);
+}
 
 bool
 Rectangle::accelerated_render(Context context,Surface *surface,int quality, const RendDesc &renddesc, ProgressCallback *cb)const
@@ -310,6 +349,7 @@ Rectangle::accelerated_render(Context context,Surface *surface,int quality, cons
 	if(is_disabled())
 		return context.accelerated_render(surface,quality,renddesc,cb);
 
+#if 0
 	const Point	tl(renddesc.get_tl());
 	const Point br(renddesc.get_br());
 
@@ -321,6 +361,18 @@ Rectangle::accelerated_render(Context context,Surface *surface,int quality, cons
 	const Real ph = (br[1] - tl[1]) / h;
 
 	Point max(point1),min(point2);
+
+
+	if (renddesc.get_transformation_chain().contains_rotation())
+	{
+#endif
+
+		// Render with Polygon layer
+		return Layer_Polygon::accelerated_render(context, surface, quality, renddesc, cb);
+
+#if 0
+	}
+
 
 	max = renddesc.get_transformation_chain().get_transformed(max);
 	min = renddesc.get_transformation_chain().get_transformed(min);
@@ -560,8 +612,9 @@ Rectangle::accelerated_render(Context context,Surface *surface,int quality, cons
 
 
 	return true;
+#endif
 }
-
+#if 0
 Rect
 Rectangle::get_bounding_rect()const
 {
@@ -597,6 +650,7 @@ Rectangle::get_bounding_rect()const
 
 	return bounds;
 }
+
 
 Rect
 Rectangle::get_full_bounding_rect(Context context)const
@@ -639,3 +693,4 @@ Rectangle::get_full_bounding_rect(Context context)const
 
 	return Layer_Composite::get_full_bounding_rect(context);
 }
+#endif

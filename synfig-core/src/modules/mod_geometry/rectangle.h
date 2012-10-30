@@ -27,7 +27,7 @@
 
 /* === H E A D E R S ======================================================= */
 
-#include <synfig/layer_composite.h>
+#include <synfig/layer_polygon.h>
 #include <synfig/color.h>
 #include <synfig/vector.h>
 #include <synfig/value.h>
@@ -39,20 +39,16 @@
 
 /* === C L A S S E S & S T R U C T S ======================================= */
 
-class Rectangle : public synfig::Layer_Composite, public synfig::Layer_NoDeform
+class Rectangle : public synfig::Layer_Polygon
 {
 	SYNFIG_LAYER_MODULE_EXT
 
 private:
 
-	synfig::Color color;
-
 	synfig::Point point1;
 	synfig::Point point2;
 
 	synfig::Real expand;
-
-	bool invert;
 
 public:
 
@@ -62,17 +58,22 @@ public:
 
 	virtual synfig::ValueBase get_param(const synfig::String & param)const;
 
+	/// FIXME: Everything forced to use upper layers
+
+#if 0
 	virtual bool is_solid_color()const;
 
 	virtual synfig::Color get_color(synfig::Context context, const synfig::Point &pos)const;
-
+#endif
 	virtual bool accelerated_render(synfig::Context context,synfig::Surface *surface,int quality, const synfig::RendDesc &renddesc, synfig::ProgressCallback *cb)const;
 
+	//! Updates the polygon data to match the parameters.
+	void sync();
+#if 0
 	synfig::Layer::Handle hit_check(synfig::Context context, const synfig::Point &point)const;
-
 	virtual synfig::Rect get_bounding_rect()const;
 	virtual synfig::Rect get_full_bounding_rect(synfig::Context context)const;
-
+#endif
 	virtual Vocab get_param_vocab()const;
 }; // END of class FilledRect
 
