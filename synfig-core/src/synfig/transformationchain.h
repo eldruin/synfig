@@ -67,6 +67,15 @@ public:
 
 		return result;
 	}
+
+	bool contains_rotation() const
+	{
+		for(std::list<Matrix>::const_iterator i = _list.begin(); i != _list.end(); i++)
+			if (i->contains_rotation())
+				return true;
+
+		return false;
+	}
 };
 
 }; // END of namespace synfig

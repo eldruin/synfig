@@ -222,6 +222,12 @@ public:
 	return Matrix(*this)+=rhs;
 		}
 
+	//! Checks whether the matrix contains a rotation
+	bool
+	contains_rotation() const {
+		return (m10 > Vector::epsilon || m01 > Vector::epsilon);
+	}
+
 };
 
 }; // END of namespace synfig
