@@ -178,12 +178,12 @@ public:
 
 	bool is_equal_to(const Vector& rhs)const
 	{
-		static const value_type epsilon(0.0000000000001);
 //		return (_x>rhs._x)?_x-rhs._x<=epsilon:rhs._x-_x<=epsilon && (_y>rhs._y)?_y-rhs._y<=epsilon:rhs._y-_y<=epsilon;
 		return (*this-rhs).mag_squared()<=epsilon;
 	}
 
 	static const Vector zero() { return Vector(0,0); }
+	static const value_type epsilon = 0.0000000000001;
 };
 
 /*!	\typedef Point
