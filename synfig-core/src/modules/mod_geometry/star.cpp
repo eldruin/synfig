@@ -104,46 +104,11 @@ Star::sync()
 bool
 Star::set_param(const String & param, const ValueBase &value)
 {
-	if(	param=="radius1" && value.same_type_as(radius1))
-	{
-		value.put(&radius1);
-		sync();
-		set_param_static(param, value.get_static());
-		return true;
-	}
-
-	if(	param=="radius2" && value.same_type_as(radius2))
-	{
-		value.put(&radius2);
-		sync();
-		set_param_static(param, value.get_static());
-		return true;
-	}
-
-	if(	param=="points" && value.same_type_as(points))
-	{
-		value.put(&points);
-		if(points<2)points=2;
-		sync();
-		set_param_static(param, value.get_static());
-		return true;
-	}
-
-	if(	param=="angle" && value.same_type_as(angle))
-	{
-		value.put(&angle);
-		sync();
-		set_param_static(param, value.get_static());
-		return true;
-	}
-
-	if(param=="regular_polygon" && value.same_type_as(regular_polygon))
-	{
-		value.put(&regular_polygon);
-		sync();
-		set_param_static(param, value.get_static());
-		return true;
-	}
+	IMPORT_PLUS_EXEC_BEFORE_SET_2PARAM(radius1, radius2, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(radius2, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(points, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(angle, sync());
+	IMPORT_PLUS_EXEC_BEFORE_SET(regular_polygon, sync());
 
 	if(param=="vector_list")
 		return false;
