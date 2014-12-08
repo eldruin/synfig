@@ -46,7 +46,6 @@
 #include <synfig/target.h>
 #include <synfig/layer.h>
 #include <synfig/time.h>
-#include <synfig/targetparam.h>
 #include <synfig/target_scanline.h>
 #include <synfig/paramdesc.h>
 #include <synfig/module.h>
@@ -68,7 +67,7 @@ using namespace std;
 using namespace synfig;
 using namespace etl;
 
-void process_job_list(list<Job>& job_list, const TargetParam& target_params) throw (SynfigToolException&)
+void process_job_list(list<Job>& job_list, const TargetParam& target_params)
 {
 	if(!job_list.size())
 		throw (SynfigToolException(SYNFIGTOOL_BORED, _("Nothing to do!")));
@@ -180,7 +179,7 @@ bool setup_job(Job& job, const TargetParam& target_parameters)
 
 		VERBOSE_OUT(4) << _("Setting the quality of the target...") << endl;
 		job.target->set_quality(job.quality);
-		
+
 		if (job.alpha_mode!=TARGET_ALPHA_MODE_KEEP)
 		{
 			VERBOSE_OUT(4) << _("Setting the alpha mode of the target...") << endl;
@@ -190,12 +189,12 @@ bool setup_job(Job& job, const TargetParam& target_parameters)
 
 	// Set the threads for the target
 	if (job.target && Target_Scanline::Handle::cast_dynamic(job.target))
-		Target_Scanline::Handle::cast_dynamic(job.target)->set_threads(threads);
+		Target_Scanline::Handle::cast_dynamic(job.target)->set_threads(SynfigToolGeneralOptions::instance()->get_threads());
 
 	return true;
 }
 
-void process_job (Job& job) throw (SynfigToolException&)
+void process_job (Job& job)
 {
 	VERBOSE_OUT(3) << job.filename.c_str() << " -- " << endl;
 	VERBOSE_OUT(3) << '\t'
@@ -241,7 +240,7 @@ void process_job (Job& job) throw (SynfigToolException&)
 		if(!job.target->render(&p))
 			throw (SynfigToolException(SYNFIGTOOL_RENDERFAILURE, _("Render Failure.")));
 
-		if(print_benchmarks)
+		if(SynfigToolGeneralOptions::instance()->should_print_benchmarks())
 			cout << job.filename.c_str()
 				 << _(": Rendered in ") << timer()
 				 << _(" seconds.") << endl;
