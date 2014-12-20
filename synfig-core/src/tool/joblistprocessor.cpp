@@ -39,9 +39,8 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/format.hpp>
+#include <boost/chrono.hpp>
 
-#include <ETL/stringf>
-#include <ETL/clock>
 #include <autorevision.h>
 #include <synfig/general.h>
 #include <synfig/canvas.h>
@@ -142,7 +141,7 @@ bool setup_job(Job& job, const TargetParam& target_parameters)
 	// Check permissions
 	if (access(bfs::path(job.outfilename).string().c_str(), W_OK) == -1)
 	{
-		VERBOSE_OUT(1) << _("Unable to create ouput for \"") << job.filename.c_str()
+		VERBOSE_OUT(1) << _("Unable to create output for \"") << job.filename.c_str()
 						<< "\": " << strerror(errno) << std::endl
 					   << _("Throwing out job...") << std::endl;
 		return false;
@@ -227,8 +226,8 @@ void process_job (Job& job)
 	else
 	{
 		VERBOSE_OUT(1) << _("Rendering...") << std::endl;
-		etl::clock timer;
-		timer.reset();
+		boost::chrono::system_clock::time_point start_timepoint =
+            boost::chrono::system_clock::now();
 
 		// Call the render member of the target
 		if(!job.target->render(&p))
@@ -236,8 +235,12 @@ void process_job (Job& job)
 
 		if(SynfigToolGeneralOptions::instance()->should_print_benchmarks())
         {
+            boost::chrono::duration<double> duration =
+                boost::chrono::system_clock::now() - start_timepoint;
+
             std::cout << job.filename.c_str()
-                      << _(": Rendered in ") << timer()
+                      << _(": Rendered in ")
+                      << duration.count()
                       << _(" seconds.") << std::endl;
         }
 	}
