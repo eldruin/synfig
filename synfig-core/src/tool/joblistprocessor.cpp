@@ -141,9 +141,9 @@ bool setup_job(Job& job, const TargetParam& target_parameters)
 	// Check permissions
 	if (access(bfs::path(job.outfilename).parent_path().string().c_str(), W_OK) == -1)
 	{
-		VERBOSE_OUT(1) << _("Unable to create output for \"") << job.filename.c_str()
-						<< "\": " << strerror(errno) << std::endl
-					   << _("Throwing out job...") << std::endl;
+		std::cerr << _("Unable to create ouput for \"") << job.filename
+                  << "\": " << strerror(errno) << std::endl
+				  << _("Throwing out job...") << std::endl;
 		return false;
 	}
 
@@ -159,9 +159,10 @@ bool setup_job(Job& job, const TargetParam& target_parameters)
 	{
 		if(!job.target)
 		{
-			VERBOSE_OUT(1) << _("Unknown target for \"") << job.filename.c_str()
-						   << "\": " << strerror(errno) << std::endl
-						   << _("Throwing out job...") << std::endl;
+		    std::cerr << _("Unknown target for \"") << job.filename
+                      << "\": " << strerror(errno) << std::endl
+                      << _("Throwing out job...") << std::endl;
+
 			return false;
 		}
 

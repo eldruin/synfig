@@ -63,7 +63,7 @@ fi
 
 BUILDROOT_VERSION=9
 BUILDROOT_LIBRARY_SET_ID=4
-MAKE_THREADS=2					#count of threads for make
+MAKE_THREADS=4					#count of threads for make
 
 # full = clean, configure, make
 # standart = configure, make
