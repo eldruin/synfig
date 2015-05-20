@@ -490,6 +490,17 @@ if test $with_jpeg = "yes" ; then {
 	AM_CONDITIONAL(HAVE_LIBJPEG,false)
 } ; fi
 
+# check googletest availability for code tests
+AC_CHECK_HEADER([gtest/gtest.h],
+  [AM_CONDITIONAL([HAVE_GTEST], true)
+   GTEST_LDFLAGS="-lgtest -lgtest_main"
+   AC_SUBST(GTEST_LDFLAGS)
+  ],
+  [AM_CONDITIONAL([HAVE_GTEST], false)
+   GTEST_LDFLAGS=""
+   AC_SUBST(GTEST_LDFLAGS)
+  ]
+)
 
 
 MODULE_DIR='${libdir}/synfig/modules'
