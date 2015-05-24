@@ -27,6 +27,7 @@
     #include <config.h>
   #endif
 
+  #include <limits>
   #include <gtest/gtest.h>
   #include <synfig/color/color.h>
   #include <boost/type_traits/is_floating_point.hpp>
@@ -44,6 +45,12 @@ protected:
     : r(1.3),  g(1.4),  b(1.5),  a(1.6),
       r2(2.3), g2(2.4), b2(2.5), a2(2.6)
   { }
+
+  void checkIsNotValid(const color_type r, const color_type g,
+                       const color_type b, const color_type a)
+  {
+    ASSERT_FALSE(Color(r, g, b, a).is_valid());
+  }
 
   static void RGBA_EQ(const Color& current, const float r, const float g,
                                             const float b, const float a)
@@ -103,4 +110,18 @@ TEST_F(ColorTest, SetRGBA)
   RGBA_EQ(c, r2, g2, b2, a2);
 }
 
+TEST_F(ColorTest, IsValid)
+{
+  ASSERT_TRUE(Color().is_valid());
+  ASSERT_TRUE(Color(r, g, b, a).is_valid());
+}
+
+TEST_F(ColorTest, IsNotValidIfContainsNaN)
+{
+  const color_type nan = std::numeric_limits<color_type>::quiet_NaN();
+  checkIsNotValid(nan, g,   b,   a  );
+  checkIsNotValid(r,   nan, b,   a  );
+  checkIsNotValid(r,   g,   nan, a  );
+  checkIsNotValid(r,   g,   b,   nan);
+}
 
