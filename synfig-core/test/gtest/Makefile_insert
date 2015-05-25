@@ -1,2 +1,6 @@
 unit_SOURCES=gtest/main.cpp    \
              gtest/color.cpp
+
+unit_LDADD = \
+	../src/synfig/libsynfig.la \
+	@SYNFIG_LIBS@

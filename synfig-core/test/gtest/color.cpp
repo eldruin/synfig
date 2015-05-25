@@ -33,6 +33,7 @@
   #include <boost/type_traits/is_floating_point.hpp>
   #include <boost/type_traits/is_integral.hpp>
   #include <boost/utility/enable_if.hpp>
+  #include <boost/format.hpp>
 #endif
 
 using synfig::Color;
@@ -42,8 +43,8 @@ class ColorTest : public testing::Test
 {
 protected:
   ColorTest()
-    : r(1.3),  g(1.4),  b(1.5),  a(1.6),
-      r2(2.3), g2(2.4), b2(2.5), a2(2.6)
+    : r(0.3),  g(0.4),  b(0.5),  a(0.6),
+      r2(0.7), g2(0.8), b2(0.9), a2(0.1)
   { }
 
   void checkIsNotValid(const color_type r, const color_type g,
@@ -51,6 +52,22 @@ protected:
   {
     ASSERT_FALSE(Color(r, g, b, a).is_valid());
   }
+
+  std::string getHex(const color_type c)
+  {
+    return str(boost::format("%02x") % int(c*255.0));
+  }
+
+  std::string getHex(const Color& c)
+  {
+    return getHex(c.get_r())+getHex(c.get_g())+getHex(c.get_b());
+  }
+
+  void checkHexString(const Color& c)
+  {
+    ASSERT_EQ(getHex(c), c.get_hex());
+  }
+
 
   static void RGBA_EQ(const Color& current, const float r, const float g,
                                             const float b, const float a)
@@ -123,5 +140,28 @@ TEST_F(ColorTest, IsNotValidIfContainsNaN)
   checkIsNotValid(r,   nan, b,   a  );
   checkIsNotValid(r,   g,   nan, a  );
   checkIsNotValid(r,   g,   b,   nan);
+}
+
+
+TEST_F(ColorTest, GetHex)
+{
+  checkHexString(Color());
+  checkHexString(Color(r));
+  checkHexString(Color(r,  g,  b,  a));
+  checkHexString(Color(r2, g2, b2, a2));
+}
+
+TEST_F(ColorTest, SetHexDefault)
+{
+  Color c;
+  c.set_hex(getHex(c));
+  RGBA_EQ(c, 0, 0, 0, 0);
+}
+
+TEST_F(ColorTest, SetHexRGBA)
+{
+  Color c;
+  c.set_hex(getHex(Color(r, g, b, a)));
+  RGBA_EQ(c, r, g, b, a);
 }
 
