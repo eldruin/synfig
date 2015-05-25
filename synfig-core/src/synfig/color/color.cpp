@@ -78,7 +78,7 @@ Color::real2hex(ColorReal c)
 }
 
 void
-Color::set_hex(String& str)
+Color::set_hex(const String& str)
 {
 	value_type r, g, b;
 	String hex;

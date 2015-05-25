@@ -65,7 +65,7 @@ CairoColor::char2hex(unsigned char c)
 }
 
 void 
-CairoColor::set_hex(String& str)
+CairoColor::set_hex(const String& str)
 {
 	CairoColor ret(*this);
 	Color c;

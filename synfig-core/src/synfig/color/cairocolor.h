@@ -222,7 +222,7 @@ public:
 	static const String char2hex(unsigned char c);
 	static unsigned char hex2char(String s);
 	
-	void set_hex( String& str);
+	void set_hex(const String& str);
 	const String get_hex()const { return String(char2hex(get_r())+char2hex(get_g())+char2hex(get_b())); }
 
 	CairoColor& set_r(const unsigned char x) {pixel &= ~rmask; pixel |=(x<<16); return *this; }

@@ -138,7 +138,7 @@ public:
 	inline const String get_hex()const;
 
 	//! Sets the color's R, G, and B from a 3 or 6 character hex string
-	void set_hex(String& hex);
+	void set_hex(const String& hex);
 
 	//! Sets the RED component to \a x
 	Color& set_r(const value_type& x) { r_ = x; return *this; }
