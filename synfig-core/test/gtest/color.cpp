@@ -69,6 +69,16 @@ protected:
   }
 
 
+  static void RGBA_NEAR(const Color& current, const float r, const float g,
+                                              const float b, const float a,
+                        const float epsilon)
+  {
+    ASSERT_NEAR(r, current.get_r(), epsilon);
+    ASSERT_NEAR(g, current.get_g(), epsilon);
+    ASSERT_NEAR(b, current.get_b(), epsilon);
+    ASSERT_NEAR(a, current.get_a(), epsilon);
+  }
+
   static void RGBA_EQ(const Color& current, const float r, const float g,
                                             const float b, const float a)
   {
@@ -77,6 +87,7 @@ protected:
     ASSERT_FLOAT_EQ(b, current.get_b());
     ASSERT_FLOAT_EQ(a, current.get_a());
   }
+
 
   const color_type r,  g,  b,  a,
                    r2, g2, b2, a2;
@@ -158,10 +169,17 @@ TEST_F(ColorTest, SetHexDefault)
   RGBA_EQ(c, 0, 0, 0, 0);
 }
 
-TEST_F(ColorTest, SetHexRGBA)
+TEST_F(ColorTest, SetHexRGB)
 {
   Color c;
+  // alpha is ignored
   c.set_hex(getHex(Color(r, g, b, a)));
-  RGBA_EQ(c, r, g, b, a);
+  RGBA_NEAR(c, r, g, b, 0, 0.01);
 }
 
+TEST_F(ColorTest, SetHexRGB_AlphaStaysUnchanged)
+{
+  Color c(3);
+  c.set_hex(getHex(Color(r, g, b, a)));
+  RGBA_NEAR(c, r, g, b, 3, 0.01);
+}
